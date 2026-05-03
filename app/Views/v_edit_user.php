@@ -14,13 +14,14 @@
                 </div>
 
                 <div class="mb-3">
-                    <label for="password" class="form-label fw-bold">Password</label>
-                    <div class="input-group">
-                        <input type="password" class="form-control" id="password" name="password" value="<?= esc($user['password']) ?>" required>
-                        <button class="btn btn-outline-secondary" type="button" id="togglePassword">
-                            <i class="fas fa-eye"></i>
-                        </button>
-                    </div>
+                    <label for="password" class="form-label fw-bold">Password Baru (Opsional)</label>
+                         <div class="input-group">
+                            <input type="password" class="form-control" id="password" name="password" placeholder="Kosongkan jika tidak ingin mengubah password">
+                              <button class="btn btn-outline-secondary" type="button" id="togglePassword">
+                                     <i class="fas fa-eye"></i>
+                              </button>
+                         </div>
+                        <small class="text-muted">Biarkan kosong jika password tidak ingin diganti.</small>
                 </div>
 
                 <div class="mb-4">

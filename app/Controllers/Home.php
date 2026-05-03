@@ -10,16 +10,14 @@ class Home extends BaseController
     }
     public function userDashboard()
     {
-        // Pastikan hanya user yang bisa mengakses halaman ini
         if (session()->get('role') !== 'user') {
             return redirect()->to('/user');
         }
         
 
-        // Mengirim data user (username) ke view
         $userData = [
-            'username' => session()->get('username'), // Nama pengguna
-            'role' => session()->get('role')          // Role pengguna
+            'username' => session()->get('username'),
+            'role' => session()->get('role')          
         ];
 
         return view('v_dashboard_user', $userData);
@@ -27,22 +25,17 @@ class Home extends BaseController
 
     public function adminDashboard()
     {
-        // Pastikan hanya admin yang bisa mengakses halaman ini
         if (session()->get('role') !== 'admin') {
             return redirect()->to('/admin');
         }
 
-        // Mengambil data pengguna dari file JSON
         $users = json_decode(file_get_contents(WRITEPATH . 'users.json'), true);
 
-        // Menghitung total jumlah pengguna
         $userCount = count($users);
 
-        // Menghitung jumlah pengguna berdasarkan role
         $adminCount = 0;
         $userRoleCount = 0;
 
-        // Loop untuk menghitung jumlah user berdasarkan role
         foreach ($users as $user) {
             if ($user['role'] === 'admin') {
                 $adminCount++;
@@ -51,13 +44,12 @@ class Home extends BaseController
             }
         }
 
-        // Data yang akan dikirim ke view
         $adminData = [
             'username' => session()->get('username'),
             'role' => session()->get('role'),
-            'userCount' => $userCount,       // Total pengguna
-            'adminCount' => $adminCount,     // Jumlah admin
-            'userRoleCount' => $userRoleCount // Jumlah user
+            'userCount' => $userCount,       
+            'adminCount' => $adminCount,     
+            'userRoleCount' => $userRoleCount 
         ];
 
         return view('v_dashboard_admin', $adminData);
@@ -67,14 +59,11 @@ class Home extends BaseController
 
     public function users()
     {
-        // Hanya admin yang bisa mengakses halaman pengguna
         if (session()->get('role') !== 'admin') {
             return redirect()->to('dashboard');
         }
-        // Mengambil data pengguna dari file JSON
         $users = json_decode(file_get_contents(WRITEPATH . 'users.json'), true);
 
-        // Mengirim data ke view
         return view('v_users', ['users' => $users]);
     }
 
@@ -85,21 +74,16 @@ class Home extends BaseController
 
     public function store()
     {
-        // Ambil data dari form (misalnya)
         $newUser = [
             'username' => $this->request->getPost('username'),
             'password' => password_hash($this->request->getPost('password'), PASSWORD_DEFAULT),
             'role' => $this->request->getPost('role')
         ];
 
-        // Membaca data pengguna yang ada
         $filePath = WRITEPATH . 'users.json';
         $users = json_decode(file_get_contents($filePath), true);
-
-        // Menambahkan user baru ke dalam array
         $users[] = $newUser;
 
-        // Menyimpan data kembali ke file JSON
         file_put_contents($filePath, json_encode($users, JSON_PRETTY_PRINT));
 
         return redirect()->to('/users');
@@ -131,17 +115,18 @@ class Home extends BaseController
     {
         $users = json_decode(file_get_contents(WRITEPATH . 'users.json'), true);
 
-        // Cari dan update data user berdasarkan username
         foreach ($users as $key => $user) {
             if ($user['username'] == $username) {
                 $users[$key]['username'] = $this->request->getPost('username');
-                $users[$key]['password'] = password_hash($this->request->getPost('password'), PASSWORD_DEFAULT);
+                $newPassword = $this->request->getPost('password');
+                if (!empty($newPassword)) {
+                    $users[$key]['password'] = password_hash($newPassword, PASSWORD_DEFAULT);
+                }
                 $users[$key]['role'] = $this->request->getPost('role');
                 break;
             }
         }
 
-        // Menyimpan data yang diperbarui ke dalam file JSON
         file_put_contents(WRITEPATH . 'users.json', json_encode($users, JSON_PRETTY_PRINT));
 
         return redirect()->to('/users');
@@ -152,7 +137,6 @@ class Home extends BaseController
     {
         $users = json_decode(file_get_contents(WRITEPATH . 'users.json'), true);
 
-        // Hapus user berdasarkan username
         foreach ($users as $key => $user) {
             if ($user['username'] == $username) {
                 unset($users[$key]);
@@ -160,9 +144,121 @@ class Home extends BaseController
             }
         }
 
-        // Menyimpan data yang sudah diperbarui ke dalam file JSON
         file_put_contents(WRITEPATH . 'users.json', json_encode(array_values($users), JSON_PRETTY_PRINT));
 
         return redirect()->to('/users');
+    }
+
+    public function buku()
+    {
+        if (session()->get('role') !== 'admin') {
+            return redirect()->to('dashboard');
+        }
+
+        $filePath = WRITEPATH . 'buku.json';
+        if (!file_exists($filePath)) {
+            $buku = [];
+        } else {
+            $buku = json_decode(file_get_contents($filePath), true);
+        }
+
+        return view('v_buku', ['buku' => $buku]);
+    }
+
+
+    public function createBuku()
+    {
+        if (session()->get('role') !== 'admin') return redirect()->to('dashboard');
+        return view('v_create_buku');
+    }
+
+    public function storeBuku()
+    {
+        if (session()->get('role') !== 'admin') return redirect()->to('dashboard');
+
+        $id_buku_input = $this->request->getPost('id_buku');
+        $filePath = WRITEPATH . 'buku.json';
+        $bukuList = file_exists($filePath) ? json_decode(file_get_contents($filePath), true) : [];
+
+        foreach ($bukuList as $b) {
+            if ($b['id_buku'] === $id_buku_input) {
+                session()->setFlashdata('failed', 'ID Buku "'. $id_buku_input .'" sudah terdaftar! Silakan gunakan ID lain.');
+                return redirect()->back(); 
+            }
+        }
+
+        $newBuku = [
+            'id_buku'   => $id_buku_input,
+            'judul'     => $this->request->getPost('judul'),
+            'pengarang' => $this->request->getPost('pengarang'),
+            'penerbit'  => $this->request->getPost('penerbit'),
+            'tahun'     => $this->request->getPost('tahun'),
+            'stok'      => (int)$this->request->getPost('stok')
+        ];
+        
+        $bukuList[] = $newBuku;
+        file_put_contents($filePath, json_encode($bukuList, JSON_PRETTY_PRINT));
+
+        return redirect()->to('/buku');
+    }
+
+    public function editBuku($id_buku)
+    {
+        if (session()->get('role') !== 'admin') return redirect()->to('dashboard');
+
+        $filePath = WRITEPATH . 'buku.json';
+        $bukuList = file_exists($filePath) ? json_decode(file_get_contents($filePath), true) : [];
+
+        $buku = null;
+        foreach ($bukuList as $b) {
+            if ($b['id_buku'] == $id_buku) {
+                $buku = $b;
+                break;
+            }
+        }
+
+        if ($buku === null) return redirect()->to('/buku');
+        
+        return view('v_edit_buku', ['buku' => $buku]);
+    }
+
+    public function updateBuku($id_buku)
+    {
+        if (session()->get('role') !== 'admin') return redirect()->to('dashboard');
+
+        $filePath = WRITEPATH . 'buku.json';
+        $bukuList = file_exists($filePath) ? json_decode(file_get_contents($filePath), true) : [];
+
+        foreach ($bukuList as $key => $b) {
+            if ($b['id_buku'] == $id_buku) {
+                $bukuList[$key]['judul']     = $this->request->getPost('judul');
+                $bukuList[$key]['pengarang'] = $this->request->getPost('pengarang');
+                $bukuList[$key]['penerbit']  = $this->request->getPost('penerbit');
+                $bukuList[$key]['tahun']     = $this->request->getPost('tahun');
+                $bukuList[$key]['stok']      = (int)$this->request->getPost('stok');
+                break;
+            }
+        }
+
+        file_put_contents($filePath, json_encode($bukuList, JSON_PRETTY_PRINT));
+        return redirect()->to('/buku');
+    }
+
+    public function deleteBuku($id_buku)
+    {
+        if (session()->get('role') !== 'admin') return redirect()->to('dashboard');
+
+        $filePath = WRITEPATH . 'buku.json';
+        $bukuList = file_exists($filePath) ? json_decode(file_get_contents($filePath), true) : [];
+
+        foreach ($bukuList as $key => $b) {
+            if ($b['id_buku'] == $id_buku) {
+                unset($bukuList[$key]);
+                break;
+            }
+        }
+
+        file_put_contents($filePath, json_encode(array_values($bukuList), JSON_PRETTY_PRINT));
+        return redirect()->to('/buku');
     }
 }

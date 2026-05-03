@@ -16,6 +16,13 @@
                     <span>Users</span>
                 </a>
             </li><!-- End Users Nav -->
+
+            <li class="nav-item">
+                <a class="nav-link <?php echo (uri_string() == 'buku') ? "active" : "collapsed" ?>" href="<?= base_url('buku') ?>">
+                    <i class="bi bi-book"></i>
+                    <span>Buku</span>
+                </a>
+            </li><!-- End Buku Nav -->
         <?php } ?>
 
         <!-- Dashboard for user -->

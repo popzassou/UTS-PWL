@@ -1,0 +1,58 @@
+[
+    {
+        "id_buku": "B001",
+        "judul": "Pemrograman Dasar",
+        "pengarang": "Budi Raharjo",
+        "penerbit": "Gramedia",
+        "tahun": "2023",
+        "stok": 10
+    },
+    {
+        "id_buku": "B002",
+        "judul": "Algoritma dan Struktur Data",
+        "pengarang": "Rinaldi Munir",
+        "penerbit": "Gramedia",
+        "tahun": "2021",
+        "stok": 5
+    },
+    {
+        "id_buku": "B003",
+        "judul": "Suka Boneka Imup",
+        "pengarang": "Aboodin",
+        "penerbit": "Gramedia",
+        "tahun": "2023",
+        "stok": 4
+    },
+    {
+        "id_buku": "B004",
+        "judul": "Pemuda Nyeni",
+        "pengarang": "Budi Speed",
+        "penerbit": "Gramedia",
+        "tahun": "2026",
+        "stok": 23
+    },
+    {
+        "id_buku": "B005",
+        "judul": "Ilmu Menjadi Kaya dari Orang China",
+        "pengarang": "Budi Speed",
+        "penerbit": "Gramedia",
+        "tahun": "2023",
+        "stok": 1
+    },
+    {
+        "id_buku": "B006",
+        "judul": "Suka Boneka Imup",
+        "pengarang": "Budi Speed",
+        "penerbit": "Gramedia",
+        "tahun": "2023",
+        "stok": 1
+    },
+    {
+        "id_buku": "B007",
+        "judul": "Suka Boneka Imup",
+        "pengarang": "Aboodin",
+        "penerbit": "Gramedia",
+        "tahun": "1234",
+        "stok": 1
+    }
+]
