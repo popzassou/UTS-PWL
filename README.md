@@ -33,11 +33,15 @@ Sebuah sistem informasi manajemen perpustakaan berbasis web ringan yang dibangun
     ```bash
     cd sistem-informasi-perpustakaan
 
-3. Jalankan development server bawaan CodeIgniter:
+3. install semua dependencies (Wajib dilakukan agar framework berjalan):
+   ```bash
+    composer install
+   
+4. Jalankan development server bawaan CodeIgniter:
     ```bash
     php spark serve
 
-4. Buka browser dan akses aplikasi pada: http://localhost:8080
+5. Buka browser dan akses aplikasi pada: http://localhost:8080
 
 🔐 Kredensial Login (Default)
 Gunakan akun berikut untuk mencoba fitur di dalam aplikasi:
