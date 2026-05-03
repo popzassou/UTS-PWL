@@ -14,6 +14,7 @@ if(uri_string()!=""){
   <title>Perpustakaan Sigma</title>
   <meta content="" name="description">
   <meta content="" name="keywords">
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
 
   <!-- Favicons -->
   <link href="<?= base_url()?>NiceAdmin/assets/img/buku.svg" rel="icon">

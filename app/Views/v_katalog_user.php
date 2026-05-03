@@ -2,6 +2,7 @@
 <?= $this->section('content') ?>
 
 <div class="container mt-4">
+    <!-- Alert Notifikasi -->
     <?php if (session()->getFlashdata('success')) : ?>
         <div class="alert alert-success alert-dismissible fade show shadow-sm" role="alert">
             <i class="bi bi-check-circle-fill me-2"></i><?= session()->getFlashdata('success') ?>
@@ -15,68 +16,68 @@
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
     <?php endif; ?>
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h4 class="fw-bold"><i class="bi bi-collection me-2"></i>Katalog Buku Perpustakaan</h4>
-    </div>
 
-    <div class="row">
-        <?php if (!empty($buku)): ?>
-            <?php foreach ($buku as $item): ?>
-                <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
-                    <div class="card h-100 shadow-sm border-0" style="transition: transform 0.2s;">
-                        <div class="card-body d-flex flex-column">
-                            <div class="mb-2">
-                                <span class="badge bg-primary bg-opacity-10 text-primary border border-primary-subtle mb-2">
-                                    ID: <?= esc($item['id_buku']) ?>
-                                </span>
-                            </div>
-                            <h5 class="card-title fw-bold text-dark mb-1"><?= esc($item['judul']) ?></h5>
-                            <p class="card-text text-muted small mb-2">
-                                <i class="bi bi-person me-1"></i> <?= esc($item['pengarang']) ?>
-                            </p>
-                            <p class="card-text small mb-3">
-                                <i class="bi bi-building me-1"></i> <?= esc($item['penerbit']) ?> (<?= esc($item['tahun']) ?>)
-                            </p>
-
-                            <div class="mt-auto">
-                                <div class="d-flex justify-content-between align-items-center mb-3">
-                                    <span class="small fw-bold">Tersedia: 
+    <div class="card shadow border-0">
+        <div class="card-header bg-primary text-white py-3 d-flex align-items-center">
+            <h5 class="mb-0"><i class="bi bi-collection me-2"></i>Katalog Buku Perpustakaan</h5>
+        </div>
+        <div class="card-body p-3">
+            <!-- Tambahkan class datatable di sini -->
+            <div class="table-responsive">
+                <table class="table table-hover align-middle datatable">
+                    <thead class="bg-light">
+                        <tr>
+                            <th width="10%">Cover</th>
+                            <th width="35%">Informasi Buku</th>
+                            <th width="25%">Penerbit & Tahun</th>
+                            <th width="15%">Ketersediaan</th>
+                            <th width="15%" class="text-center">Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php if (!empty($buku)): ?>
+                            <?php foreach ($buku as $item): ?>
+                                <tr>
+                                    <td>
+                                        <div class="bg-primary bg-opacity-10 text-primary rounded d-flex align-items-center justify-content-center" style="width: 50px; height: 65px;">
+                                            <i class="bi bi-book fs-3"></i>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <h6 class="fw-bold mb-1 text-dark"><?= esc($item['judul']) ?></h6>
+                                        <small class="text-muted"><i class="bi bi-person me-1"></i><?= esc($item['pengarang']) ?></small><br>
+                                        <small class="text-muted"><i class="bi bi-upc-scan me-1"></i>ID: <?= esc($item['id_buku']) ?></small>
+                                    </td>
+                                    <td>
+                                        <span><?= esc($item['penerbit']) ?></span><br>
+                                        <span class="badge bg-secondary bg-opacity-10 text-secondary border border-secondary-subtle"><?= esc($item['tahun']) ?></span>
+                                    </td>
+                                    <td>
                                         <?php if($item['stok'] > 0): ?>
-                                            <span class="text-success"><?= esc($item['stok']) ?> Buku</span>
+                                            <span class="badge bg-success rounded-pill px-3"><?= esc($item['stok']) ?> Tersedia</span>
                                         <?php else: ?>
-                                            <span class="text-danger">Habis</span>
+                                            <span class="badge bg-danger rounded-pill px-3">Habis</span>
                                         <?php endif; ?>
-                                    </span>
-                                </div>
-                                
-                                <?php if($item['stok'] > 0): ?>
-                                    <a href="<?= base_url('buku/pinjam/' . esc($item['id_buku'])) ?>" class="btn btn-sm btn-primary w-100" onclick="return confirm('Apakah kamu yakin ingin meminjam buku <?= esc($item['judul']) ?>?')">
-                                        <i class="bi bi-bookmark-plus"></i> Pinjam Buku
-                                    </a>
-                                <?php else: ?>
-                                    <button class="btn btn-sm btn-secondary w-100" disabled>
-                                        <i class="bi bi-x-circle"></i> Stok Habis
-                                    </button>
-                                <?php endif; ?>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            <?php endforeach; ?>
-        <?php else: ?>
-            <div class="col-12 text-center py-5">
-                <i class="bi bi-inbox fs-1 text-muted d-block mb-3"></i>
-                <h5 class="text-muted">Belum ada buku di perpustakaan.</h5>
+                                    </td>
+                                    <td class="text-center">
+                                        <?php if($item['stok'] > 0): ?>
+                                            <a href="<?= base_url('buku/pinjam/' . esc($item['id_buku'])) ?>" class="btn btn-sm btn-primary w-100" onclick="return confirm('Apakah kamu yakin ingin meminjam buku <?= esc($item['judul']) ?>?')">
+                                                <i class="bi bi-bookmark-plus"></i> Pinjam
+                                            </a>
+                                        <?php else: ?>
+                                            <button class="btn btn-sm btn-secondary w-100" disabled>
+                                                <i class="bi bi-x-circle"></i> Habis
+                                            </button>
+                                        <?php endif; ?>
+                                    </td>
+                                </tr>
+                            <?php endforeach; ?>
+                        <?php endif; ?>
+                    </tbody>
+                </table>
             </div>
-        <?php endif; ?>
+        </div>
     </div>
 </div>
-
-<style>
-    .card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 .5rem 1rem rgba(0,0,0,.15)!important;
-    }
-</style>
 
 <?= $this->endSection() ?>
