@@ -49,7 +49,7 @@ Akun Admin:
 
 Akun User (Guest):
 
-- Username: (atau buat user baru via Panel Admin)
+- Username: (buat user baru via Panel Admin)
 - Password: (Sesuaikan)
 
 
