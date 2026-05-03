@@ -32,7 +32,14 @@
                     <i class="bi bi-grid"></i>
                     <span>Dashboard</span>
                 </a>
-            </li><!-- End Dashboard User Nav -->
+            </li>
+            <li class="nav-item">
+                <a class="nav-link <?php echo (uri_string() == 'katalog') ? "active" : "collapsed" ?>" href="<?= base_url('katalog') ?>">
+                    <i class="bi bi-journal-bookmark"></i>
+                    <span>Katalog Buku</span>
+                </a>
+            </li>
+            <!-- End Dashboard User Nav -->
         <?php } ?>
 
         <!-- Users menu for admin -->

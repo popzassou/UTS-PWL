@@ -11,13 +11,61 @@ class Home extends BaseController
     public function userDashboard()
     {
         if (session()->get('role') !== 'user') {
-            return redirect()->to('/user');
+            return redirect()->to('/admin');
         }
+
+        $username = session()->get('username');
+
+        $pinjamPath = WRITEPATH . 'peminjaman.json';
+        $semuaPinjaman = file_exists($pinjamPath) ? json_decode(file_get_contents($pinjamPath), true) : [];
+
+        $pinjamanSaya = [];
+        $totalDipinjam = 0;
         
+        // --- VARIABEL UNTUK DENDA ---
+        $totalTerlambat = 0; // Berapa kali dia telat
+        $totalDenda = 0;     // Total uang dendanya
+        $tarifDenda = 5000;  // Misal: denda Rp 5.000 per hari
+        $hariIni = strtotime(date('Y-m-d')); // Waktu hari ini dalam detik
+        // ----------------------------
+
+        foreach ($semuaPinjaman as $key => $p) {
+            if ($p['username'] === $username) {
+                // Hitung denda jika statusnya masih dipinjam
+                $tglKembali = strtotime($p['tgl_kembali']);
+                $dendaBukuIni = 0;
+
+                if ($p['status'] === 'Dipinjam' && $hariIni > $tglKembali) {
+                    // Cari selisih detik, lalu ubah ke hari
+                    $selisihDetik = $hariIni - $tglKembali;
+                    $selisihHari = floor($selisihDetik / (60 * 60 * 24));
+                    
+                    $dendaBukuIni = $selisihHari * $tarifDenda;
+                    $totalDenda += $dendaBukuIni;
+                    $totalTerlambat++;
+                }
+
+                // Masukkan info denda ke dalam array riwayat agar bisa ditampilkan di tabel
+                $p['denda_berjalan'] = $dendaBukuIni;
+                $pinjamanSaya[] = $p;
+                
+                $totalDipinjam++; 
+            }
+        }
+
+        $bukuTerakhir = null;
+        if (!empty($pinjamanSaya)) {
+            $bukuTerakhir = end($pinjamanSaya);
+        }
 
         $userData = [
-            'username' => session()->get('username'),
-            'role' => session()->get('role')          
+            'username'       => $username,
+            'role'           => session()->get('role'),
+            'riwayat'        => array_reverse($pinjamanSaya),
+            'totalDipinjam'  => $totalDipinjam,
+            'bukuTerakhir'   => $bukuTerakhir,
+            'totalTerlambat' => $totalTerlambat, // Kirim ke View
+            'totalDenda'     => $totalDenda      // Kirim ke View
         ];
 
         return view('v_dashboard_user', $userData);
@@ -260,5 +308,65 @@ class Home extends BaseController
 
         file_put_contents($filePath, json_encode(array_values($bukuList), JSON_PRETTY_PRINT));
         return redirect()->to('/buku');
+    }
+    public function katalog()
+    {
+        //hanya user yang bisa mengakses halaman ini
+        if (session()->get('role') !== 'user') {
+            return redirect()->to('/admin');
+        }
+
+        $filePath = WRITEPATH . 'buku.json';
+        $bukuList = file_exists($filePath) ? json_decode(file_get_contents($filePath), true) : [];
+
+        return view('v_katalog_user', ['buku' => $bukuList]);
+    }
+    public function pinjamBuku($id_buku)
+    {
+        // Hanya user yang boleh meminjam
+        if (session()->get('role') !== 'user') return redirect()->to('admin');
+
+        $username = session()->get('username');
+        $bukuPath = WRITEPATH . 'buku.json';
+        $bukuList = file_exists($bukuPath) ? json_decode(file_get_contents($bukuPath), true) : [];
+        $bukuFound = false;
+        $judulBuku = '';
+        
+        foreach ($bukuList as $key => $b) {
+            if ($b['id_buku'] == $id_buku) {
+                if ($b['stok'] > 0) {
+                    $bukuList[$key]['stok'] -= 1;
+                    $bukuFound = true;
+                    $judulBuku = $b['judul'];
+                }
+                break;
+            }
+        }
+
+        if (!$bukuFound) {
+            session()->setFlashdata('failed', 'Maaf, buku tidak ditemukan atau stok sudah habis.');
+            return redirect()->back();
+        }
+
+        file_put_contents($bukuPath, json_encode($bukuList, JSON_PRETTY_PRINT));
+
+        $pinjamPath = WRITEPATH . 'peminjaman.json';
+        $pinjamList = file_exists($pinjamPath) ? json_decode(file_get_contents($pinjamPath), true) : [];
+
+        $newPinjam = [
+            'id_pinjam'   => 'TRX' . time(), // Bikin ID transaksi otomatis dari waktu
+            'username'    => $username,
+            'id_buku'     => $id_buku,
+            'judul'       => $judulBuku,
+            'tgl_pinjam'  => date('Y-m-d'),
+            'tgl_kembali' => date('Y-m-d', strtotime('+14 days')), // Tenggat waktu 14 hari
+            'status'      => 'Dipinjam'
+        ];
+
+        $pinjamList[] = $newPinjam;
+        file_put_contents($pinjamPath, json_encode($pinjamList, JSON_PRETTY_PRINT));
+
+        session()->setFlashdata('success', 'Berhasil meminjam buku: <strong>' . $judulBuku . '</strong>. Jangan lupa kembalikan tepat waktu!');
+        return redirect()->to('/katalog');
     }
 }

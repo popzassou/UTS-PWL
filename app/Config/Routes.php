@@ -31,3 +31,5 @@ $routes->get('/buku/edit/(:any)', 'Home::editBuku/$1', ['filter' => 'auth']);
 $routes->post('/buku/update/(:any)', 'Home::updateBuku/$1', ['filter' => 'auth']);
 $routes->get('/buku/delete/(:any)', 'Home::deleteBuku/$1', ['filter' => 'auth']);
 
+$routes->get('/katalog', 'Home::katalog', ['filter' => 'auth']);
+$routes->get('/buku/pinjam/(:any)', 'Home::pinjamBuku/$1', ['filter' => 'auth']);
