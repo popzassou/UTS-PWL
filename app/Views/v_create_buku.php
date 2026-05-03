@@ -17,7 +17,7 @@
             <?php endif; ?>
 
             <form action="<?= base_url('buku/store') ?>" method="post">
-                <!-- Sisa form kamu di bawah sini -->
+
             <form action="<?= base_url('buku/store') ?>" method="post">
                 <div class="row">
                     <div class="col-md-6 mb-3">
@@ -53,8 +53,7 @@
                 </div>
 
                 <button type="submit" class="btn btn-primary px-4">
-                    <i class="bi bi-save me-1"></i> Simpan Data Buku
-                </button>
+                    <i class="bi bi-save me-1"></i> Simpan Data Buku</button>
                 <a href="<?= base_url('buku') ?>" class="btn btn-secondary px-4 ms-2">Batal</a>
             </form>
         </div>

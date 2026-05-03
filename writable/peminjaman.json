@@ -1,20 +1,22 @@
 [
-  {
-    "id_pinjam": "TRX1777796365",
-    "username": "Karel",
-    "id_buku": "B005",
-    "judul": "Ilmu Menjadi Kaya dari Orang China",
-    "tgl_pinjam": "2026-05-03",
-    "tgl_kembali": "2026-05-17",
-    "status": "Dipinjam"
-  },
-  {
-    "id_pinjam": "TRX1777797200",
-    "username": "Karel",
-    "id_buku": "B001",
-    "judul": "Pemrograman Dasar",
-    "tgl_pinjam": "2026-05-03",
-    "tgl_kembali": "2026-04-30",
-    "status": "Dipinjam"
-  }
+    {
+        "id_pinjam": "TRX1777796365",
+        "username": "Karel",
+        "id_buku": "B005",
+        "judul": "Ilmu Menjadi Kaya dari Orang China",
+        "tgl_pinjam": "2026-05-03",
+        "tgl_kembali": "2026-05-17",
+        "status": "Dikembalikan",
+        "tgl_dikembalikan": "2026-05-03"
+    },
+    {
+        "id_pinjam": "TRX1777797200",
+        "username": "Karel",
+        "id_buku": "B001",
+        "judul": "Pemrograman Dasar",
+        "tgl_pinjam": "2026-05-03",
+        "tgl_kembali": "2026-04-30",
+        "status": "Dikembalikan",
+        "tgl_dikembalikan": "2026-05-03"
+    }
 ]

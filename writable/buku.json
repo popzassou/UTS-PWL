@@ -5,7 +5,7 @@
         "pengarang": "Budi Raharjo",
         "penerbit": "Gramedia",
         "tahun": "2023",
-        "stok": 9
+        "stok": 10
     },
     {
         "id_buku": "B002",
@@ -37,7 +37,7 @@
         "pengarang": "Budi Speed",
         "penerbit": "Gramedia",
         "tahun": "2023",
-        "stok": 0
+        "stok": 1
     },
     {
         "id_buku": "B006",

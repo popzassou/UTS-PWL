@@ -369,4 +369,64 @@ class Home extends BaseController
         session()->setFlashdata('success', 'Berhasil meminjam buku: <strong>' . $judulBuku . '</strong>. Jangan lupa kembalikan tepat waktu!');
         return redirect()->to('/katalog');
     }
+    public function transaksiAdmin()
+    {
+        if (session()->get('role') !== 'admin') return redirect()->to('dashboard');
+
+        $pinjamPath = WRITEPATH . 'peminjaman.json';
+        $semuaPinjaman = file_exists($pinjamPath) ? json_decode(file_get_contents($pinjamPath), true) : [];
+
+        $hariIni = strtotime(date('Y-m-d'));
+        $tarifDenda = 5000;
+
+        foreach ($semuaPinjaman as $key => $p) {
+            $denda = 0;
+            if ($p['status'] === 'Dipinjam') {
+                $tglKembali = strtotime($p['tgl_kembali']);
+                if ($hariIni > $tglKembali) {
+                    $selisihHari = floor(($hariIni - $tglKembali) / (60 * 60 * 24));
+                    $denda = $selisihHari * $tarifDenda;
+                }
+            }
+            $semuaPinjaman[$key]['denda_berjalan'] = $denda;
+        }
+
+        usort($semuaPinjaman, function($a, $b) {
+            if ($a['status'] == $b['status']) return 0;
+            return ($a['status'] == 'Dipinjam') ? -1 : 1;
+        });
+
+        return view('v_transaksi_admin', ['transaksi' => $semuaPinjaman]);
+    }
+
+    public function kembalikanBuku($id_pinjam, $id_buku)
+    {
+        if (session()->get('role') !== 'admin') return redirect()->to('dashboard');
+
+        $pinjamPath = WRITEPATH . 'peminjaman.json';
+        $pinjamList = file_exists($pinjamPath) ? json_decode(file_get_contents($pinjamPath), true) : [];
+
+        foreach ($pinjamList as $key => $p) {
+            if ($p['id_pinjam'] === $id_pinjam) {
+                $pinjamList[$key]['status'] = 'Dikembalikan';
+                $pinjamList[$key]['tgl_dikembalikan'] = date('Y-m-d'); // Catat tgl balikin beneran
+                break;
+            }
+        }
+        file_put_contents($pinjamPath, json_encode($pinjamList, JSON_PRETTY_PRINT));
+
+        $bukuPath = WRITEPATH . 'buku.json';
+        $bukuList = file_exists($bukuPath) ? json_decode(file_get_contents($bukuPath), true) : [];
+
+        foreach ($bukuList as $key => $b) {
+            if ($b['id_buku'] === $id_buku) {
+                $bukuList[$key]['stok'] += 1;
+                break;
+            }
+        }
+        file_put_contents($bukuPath, json_encode($bukuList, JSON_PRETTY_PRINT));
+
+        session()->setFlashdata('success', 'Buku berhasil dikembalikan dan stok telah bertambah.');
+        return redirect()->to('/transaksi');
+    }
 }

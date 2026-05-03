@@ -23,6 +23,12 @@
                     <span>Buku</span>
                 </a>
             </li><!-- End Buku Nav -->
+            <li class="nav-item">
+                <a class="nav-link <?php echo (uri_string() == 'transaksi') ? "active" : "collapsed" ?>" href="<?= base_url('transaksi') ?>">
+                    <i class="bi bi-arrow-left-right"></i>
+                    <span>Transaksi</span>
+                </a>
+            </li><!-- End Transaksi Nav -->
         <?php } ?>
 
         <!-- Dashboard for user -->

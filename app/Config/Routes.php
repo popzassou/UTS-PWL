@@ -33,3 +33,6 @@ $routes->get('/buku/delete/(:any)', 'Home::deleteBuku/$1', ['filter' => 'auth'])
 
 $routes->get('/katalog', 'Home::katalog', ['filter' => 'auth']);
 $routes->get('/buku/pinjam/(:any)', 'Home::pinjamBuku/$1', ['filter' => 'auth']);
+
+$routes->get('/transaksi', 'Home::transaksiAdmin', ['filter' => 'auth']);
+$routes->get('/transaksi/kembali/(:any)/(:any)', 'Home::kembalikanBuku/$1/$2', ['filter' => 'auth']);
